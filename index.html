@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صدقة جارية - الموسوعة الإسلامية</title>
+    <style>
+        :root { --primary: #064e3b; --secondary: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: #1e293b; }
+        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.4s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* السبحة */
+        .card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        #count { font-size: 70px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .tap-btn { width: 140px; height: 140px; border-radius: 50%; background: var(--primary); border: 8px solid var(--secondary); color: white; font-size: 22px; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* مشغل القرآن الذكي */
+        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; margin-bottom: 15px; }
+        .player-box { background: #f1f5f9; padding: 15px; border-radius: 15px; display: none; text-align: center; }
+        .download-btn { display: inline-block; margin-top: 10px; padding: 8px 20px; background: var(--secondary); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+
+        /* القائمة السفلية */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); }
+        .nav-item { border: none; background: none; color: #64748b; font-size: 11px; cursor: pointer; transition: 0.3s; }
+        .nav-item.active-nav { color: var(--primary); font-weight: bold; transform: translateY(-5px); }
+        
+        .quran-text { font-size: 20px; line-height: 2; text-align: center; color: #334155; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div id="person-name" style="font-size: 18px; font-weight: bold;">صدقة جارية</div>
+    <div style="font-size: 12px; opacity: 0.9;">موسوعة القران الكريم والاذكار</div>
+</div>
+
+<div id="subha" class="tab-content active">
+    <div class="card">
+        <h3>المسبحة الإلكترونية</h3>
+        <div id="count">0</div>
+        <button class="tap-btn" onclick="add()">سبّح</button>
+        <div style="margin-top: 15px;">
+            <button onclick="resetCount()" style="color: #ef4444; background: none; border: none; cursor: pointer;">إعادة العداد للصفر</button>
+        </div>
+    </div>
+</div>
+
+<div id="audio" class="tab-content">
+    <div class="card">
+        <h3>القرآن الكريم كاملاً (114 سورة)</h3>
+        <p style="font-size: 13px; color: #64748b;">اختر السورة للاستماع أو التحميل للجهاز</p>
+        
+        <select id="surahSelect" onchange="updatePlayer()">
+            <option value="">-- اختر السورة --</option>
+        </select>
+
+        <div id="playerBox" class="player-box">
+            <h4 id="selectedSurahName"></h4>
+            <audio id="mainAudio" controls style="width: 100%;"></audio>
+            <br>
+            <a id="downloadLink" href="#" download class="download-btn">📥 تحميل السورة (للسماع بدون نت)</a>
+        </div>
+    </div>
+</div>
+
+<div id="quran" class="tab-content">
+    <div class="card">
+        <h3>قراءة الورد اليومي</h3>
+        <div class="quran-text">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ <br>
+            الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ۝ الرَّحْمَنِ الرَّحِيمِ ۝ مَالِكِ يَوْمِ الدِّينِ ۝ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ۝ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ۝ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ
+        </div>
+        <hr>
+        <a href="https://quran.ksu.edu.sa/m.php" style="color: var(--secondary); text-decoration: none;">📖 تصفح المصحف كاملاً (قراءة)</a>
+    </div>
+</div>
+
+<div id="stories" class="tab-content">
+    <div class="card" style="text-align: right;">
+        <h3>من قصص الأنبياء (بدون إنترنت)</h3>
+        <details>
+            <summary><b>قصة آدم عليه السلام</b></summary>
+            <p>خلق الله آدم من طين وأمر الملائكة بالسجود له...</p>
+        </details>
+        <details style="margin-top: 10px;">
+            <summary><b>قصة نوح عليه السلام</b></summary>
+            <p>لبث في قومه ألف سنة إلا خمسين عاماً يدعوهم لتوحيد الله...</p>
+        </details>
+        <details style="margin-top: 10px;">
+            <summary><b>قصة إبراهيم عليه السلام</b></summary>
+            <p>هو خليل الله وباني بيت الله الحرام مع ابنه إسماعيل...</p>
+        </details>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <button class="nav-item active-nav" onclick="showTab('subha', this)">📿<br>سبحة</button>
+    <button class="nav-item" onclick="showTab('audio', this)">🎧<br>استماع</button>
+    <button class="nav-item" onclick="showTab('quran', this)">📖<br>قراءة</button>
+    <button class="nav-item" onclick="showTab('stories', this)">📜<br>قصص</button>
+</div>
+
+<script>
+    // توليد قائمة الـ 114 سورة تلقائياً
+    const surahs = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+    
+    const select = document.getElementById('surahSelect');
+    surahs.forEach((name, index) => {
+        let opt = document.createElement('option');
+        let num = (index + 1).toString().padStart(3, '0');
+        opt.value = num;
+        opt.textContent = `${index + 1}. سورة ${name}`;
+        select.appendChild(opt);
+    });
+
+    function updatePlayer() {
+        const val = select.value;
+        const box = document.getElementById('playerBox');
+        if(!val) { box.style.display = 'none'; return; }
+        
+        box.style.display = 'block';
+        const name = surahs[parseInt(val)-1];
+        document.getElementById('selectedSurahName').textContent = "سورة " + name;
+        
+        const audioUrl = `https://server11.mp3quran.net/yasser/${val}.mp3`;
+        const audio = document.getElementById('mainAudio');
+        audio.src = audioUrl;
+        document.getElementById('downloadLink').href = audioUrl;
+    }
+
+    // نظام المسبحة
+    let count = localStorage.getItem('s_count') || 0;
+    document.getElementById('count').innerText = count;
+
+    function add() {
+        count++;
+        document.getElementById('count').innerText = count;
+        localStorage.setItem('s_count', count);
+        if (navigator.vibrate) navigator.vibrate(50);
+    }
+
+    function resetCount() {
+        if(confirm('تصفير العداد؟')) {
+            count = 0;
+            document.getElementById('count').innerText = 0;
+            localStorage.setItem('s_count', 0);
+        }
+    }
+
+    function showTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active-nav'));
+        btn.classList.add('active-nav');
+    }
+</script>
+</body>
+</html>
